@@ -56,8 +56,13 @@ public class OrderController : ControllerBase
         if (!isAdm && userId != order!.UserId)
             throw new BadRequestException("UserId", "UserID must be the same as requested");
 
-        request.OrderId = orderId;
-        order = _service.UpdateAddress(request);
+        var updatedOrder = new UpdatedOrderAddressEntity
+        {
+            OrderId = orderId,
+            Addres = request.Addres,
+            CEP = request.CEP
+        };
+        order = _service.UpdateAddress(updatedOrder);
         return Ok(order);
     }
 
@@ -79,8 +84,13 @@ public class OrderController : ControllerBase
     public IActionResult Post([FromBody] CreateOrderRequest request)
     {
         int? userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-        BaseOrderRequest formatedRequest = (BaseOrderRequest)request;
-        formatedRequest.UserId = userId;
+        BaseOrderRequest formatedRequest =
+            new BaseOrderRequest
+            {
+                UserId = userId,
+                Addres = request.Addres,
+                CEP = request.CEP
+            };
         var order = _service.Create(formatedRequest);
         return Ok(order);
     }
@@ -137,8 +147,8 @@ public class OrderController : ControllerBase
         if (!isAdm && userId != order!.UserId)
             throw new BadRequestException("UserId", "UserID must be the same as requested");
 
-        var itemDeleted = _service.RemoveItem(orderId, itemId);
-        return Ok(itemDeleted);
+        _service.RemoveItem(orderId, itemId);
+        return NoContent();
     }
 
     [HttpGet("{orderId}/Payment")]

@@ -5,9 +5,9 @@ using System.Reflection;
 
 namespace Domain.Validator;
 
-public class AddressValidator : IValidator<UpdatedOrderAddressRequest>
+public class AddressValidator : IValidator<UpdatedOrderAddressEntity>
 {
-    public List<ErrorMessageResponse> Validate(UpdatedOrderAddressRequest order)
+    public List<ErrorMessageResponse> Validate(UpdatedOrderAddressEntity order)
     {
         var errors = new List<ErrorMessageResponse>();
 

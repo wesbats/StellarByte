@@ -84,7 +84,7 @@ builder.Services.AddSingleton<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IValidator<BaseOrderRequest>, OrderValidator>();
 builder.Services.AddScoped<IValidator<BaseOrderItem>, ItemValidator>();
-builder.Services.AddScoped<IValidator<UpdatedOrderAddressRequest>, AddressValidator>();
+builder.Services.AddScoped<IValidator<UpdatedOrderAddressEntity>, AddressValidator>();
 
 var app = builder.Build();
 

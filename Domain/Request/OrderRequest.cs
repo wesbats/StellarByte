@@ -13,6 +13,12 @@ public class BaseOrderRequest : CreateOrderRequest
 
 public class UpdatedOrderAddressRequest
 {
+    public string? Addres { get; set; }
+    public int? CEP { get; set; }
+}
+
+public class UpdatedOrderAddressEntity
+{
     public int? OrderId { get; set; }
     public string? Addres { get; set; }
     public int? CEP { get; set; }

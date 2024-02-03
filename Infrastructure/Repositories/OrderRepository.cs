@@ -14,9 +14,9 @@ public interface IOrderRepository
     List<OrderItem> GetOrderItems(int idOrder);
     OrderItem? GetOrderItem(int idOrder, int idItem);
     Order Create(Order newOrder);
-    Order UpdateAddress(UpdatedOrderAddressRequest updatedOrder);
+    Order UpdateAddress(UpdatedOrderAddressEntity updatedOrder);
     Order AddItem (int orderId, OrderItem Item);
-    Order RemoveItem(int orderId, int item);
+    void RemoveItem(int orderId, int item);
     Order FinalizePayment(Order order);
     void Delete(int Id);
 }
@@ -73,7 +73,7 @@ public class OrderRepository : IOrderRepository
         return newOrder;
     }
 
-    public Order UpdateAddress(UpdatedOrderAddressRequest updatedOrderAddress)
+    public Order UpdateAddress(UpdatedOrderAddressEntity updatedOrderAddress)
     {
         var order = GetOrder((int)updatedOrderAddress.OrderId!);
         if (order is null)
@@ -96,7 +96,7 @@ public class OrderRepository : IOrderRepository
         return order;
     }
 
-    public Order RemoveItem(int orderId, int itemId)
+    public void RemoveItem(int orderId, int itemId)
     {
         var order = GetOrder(orderId);
         if (order is null)
@@ -107,7 +107,6 @@ public class OrderRepository : IOrderRepository
             throw new BadRequestException("productId", "productId is invalid!");
 
         order.OrderItems.Remove(item!);
-        return order;
     }
 
     public Order FinalizePayment(Order order)

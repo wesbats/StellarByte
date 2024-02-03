@@ -18,8 +18,8 @@ public interface IOrderService
     OrderItem GetOrderItem(int orderId, int itemId);
     OrderResponse Create(BaseOrderRequest newOrder);
     OrderResponse AddItem(int orderId, BaseOrderItem item);
-    OrderResponse RemoveItem(int orderId, int itemId);
-    OrderResponse UpdateAddress(UpdatedOrderAddressRequest updatedOrder);
+    void RemoveItem(int orderId, int itemId);
+    OrderResponse UpdateAddress(UpdatedOrderAddressEntity updatedOrder);
     OrderResponse FinalizePayment(int orderID);
     void Delete(int orderID);
 }
@@ -28,13 +28,13 @@ public class OrderService : IOrderService
 {
     private readonly IValidator<BaseOrderRequest> _orderValidator;
     private readonly IValidator<BaseOrderItem> _itemValidator;
-    private readonly IValidator<UpdatedOrderAddressRequest> _addressValidator;
+    private readonly IValidator<UpdatedOrderAddressEntity> _addressValidator;
     private readonly IOrderRepository _repoOrder;
     private readonly IComputerRepository _repoComputer;
     private readonly IUserService _userService;
 
     public OrderService(IValidator<BaseOrderRequest> orderValidator, IValidator<BaseOrderItem> itemValidator,
-                        IValidator<UpdatedOrderAddressRequest> addressValidator,
+                        IValidator<UpdatedOrderAddressEntity> addressValidator,
                         IOrderRepository repository, IComputerRepository repoComputer, IUserService userService)
     {
         _orderValidator = orderValidator;
@@ -109,13 +109,11 @@ public class OrderService : IOrderService
         return response;
     }
 
-    public OrderResponse RemoveItem(int orderId, int itemId)
+    public void RemoveItem(int orderId, int itemId)
     {
-        var order = _repoOrder.RemoveItem(orderId, itemId);
-        var response = OrderMapper.ToResponse(order);
-        return response;
+        _repoOrder.RemoveItem(orderId, itemId);
     }
-    public OrderResponse UpdateAddress(UpdatedOrderAddressRequest request)
+    public OrderResponse UpdateAddress(UpdatedOrderAddressEntity request)
     {
         var Errors = _addressValidator.Validate(request);
         if (Errors.Any())
