@@ -25,7 +25,7 @@ public class ExceptionMiddleware
             if(typeof(ICustomException).IsAssignableFrom(ex.GetType()))
             {
                 var exInterface = ex as ICustomException;
-                context.Response.StatusCode = exInterface.StatusCode;
+                context.Response.StatusCode = exInterface!.StatusCode;
                 context.Response.ContentType = "application/json";
                 await context.Response.WriteAsync(exInterface.GetResponse());
             }

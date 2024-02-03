@@ -39,6 +39,7 @@ public class UserService : IUserService
         var response = users.Select(user => UserMapper.ToResponse(user)).ToList();
         return response;
     }
+
     public UserResponse? GetById(int id)
     {
         var user = _repo.GetById(id);

@@ -1,10 +1,14 @@
 ﻿namespace Domain.Request;
 
-public class BaseOrderRequest
+public class CreateOrderRequest
 {
-    public int? UserId { get; set; }
     public string? Addres { get; set; }
     public int? CEP { get; set; }
+}
+
+public class BaseOrderRequest : CreateOrderRequest
+{
+    public int? UserId { get; set; }
 }
 
 public class UpdatedOrderAddressRequest

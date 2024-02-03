@@ -18,6 +18,7 @@ public class ComputerController : ControllerBase
     }
     
     [HttpGet]
+    [AllowAnonymous]
     public IActionResult List()
     {
         var computers = _service.List();
@@ -25,6 +26,7 @@ public class ComputerController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [AllowAnonymous]
     public IActionResult Get(int id)
     {
         var computer = _service.GetById(id);
