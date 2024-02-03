@@ -10,6 +10,7 @@ public interface IUserRepository
     List<User> List();
     User? GetById(int id);
     bool VerifiById(int id);
+    User? FindByEmail(string email);
     User Create(User newUser);
     User Update(User updatedUser);
     void Delete(int Id);
@@ -39,6 +40,11 @@ public class UserRepository : IUserRepository
         return user;
     }
 
+    public User? FindByEmail(string email)
+    {
+        return _users.FirstOrDefault(x => x.Email == email);
+    }
+
     public bool VerifiById(int id)
     {
         return GetById(id) != null ? true : false;
@@ -60,7 +66,7 @@ public class UserRepository : IUserRepository
 
         user.Name = updatedUser.Name;
         user.Admin = updatedUser.Admin;
-        user.Mail = updatedUser.Mail;
+        user.Email = updatedUser.Email;
         user.PasswordHash = updatedUser.PasswordHash;
 
         return user;

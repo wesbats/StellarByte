@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Domain.Request;
 using Application.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Web.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize(Roles = "Adm")]
 public class ComputerController : ControllerBase
 {
     private readonly IComputerService _service;

@@ -2,6 +2,7 @@
 using Domain.Exceptions;
 using Domain.Mappers;
 using Domain.Request;
+using Domain.Requests;
 using Domain.Responses;
 using Infrastructure.Repositories;
 using System.Collections.Generic;
@@ -11,10 +12,10 @@ namespace Application.Services;
 
 public interface IUserService
 {
-    List<User> List();
-    User? GetById(int id);
-    User Create(BaseUserRequest newUser);
-    User Update(UpdateUserRequest updatedUser);
+    List<UserResponse> List();
+    UserResponse? GetById(int id);
+    UserResponse Create(BaseUserRequest newUser);
+    UserResponse Update(UpdateUserRequest updatedUser);
     void Delete(int id);
 }
 
@@ -22,44 +23,51 @@ public class UserService : IUserService
 {
     private readonly IValidator<BaseUserRequest> _validator;
     private readonly IUserRepository _repo;
+    private readonly IHashingService _hashingService;
 
-    public UserService(IValidator<BaseUserRequest> validator, IUserRepository repo)
+    public UserService(IValidator<BaseUserRequest> validator, IUserRepository repo, IHashingService hashingService)
     {
         _validator = validator;
         _repo = repo;
+        _hashingService = hashingService;
     }
 
 
-    public List<User> List()
+    public List<UserResponse> List()
     {
-        return _repo.List();
+        var users = _repo.List();
+        var response = users.Select(user => UserMapper.ToResponse(user)).ToList();
+        return response;
     }
-    public User? GetById(int id)
+    public UserResponse? GetById(int id)
     {
         var user = _repo.GetById(id);
-        return user is null ? null : user;
+        return user is null ? null : UserMapper.ToResponse(user);
     }
 
-    public User Create(BaseUserRequest newUser)
+    public UserResponse Create(BaseUserRequest newUser)
     {
         var errors = _validator.Validate(newUser);
-
         if (errors.Any())
             throw new BadRequestException(errors);
 
         User user = UserMapper.ToEntity(newUser);
-        return _repo.Create(user);
+        user.PasswordHash = _hashingService.Hash(user.PasswordHash!);
+        return UserMapper.ToResponse(_repo.Create(user));
     }
 
-    public User Update(UpdateUserRequest request)
+    public UserResponse Update(UpdateUserRequest request)
     {
         var errors = _validator.Validate(request);
-
         if (errors.Any())
             throw new BadRequestException(errors);
+        var exist = _repo.GetById(request.Id) != null;
+        if (!exist)
+            throw new NotFoundException("User not found!");
 
         var updateUser = UserMapper.ToEntity(request);
-        return _repo.Update(updateUser);
+        updateUser.PasswordHash = _hashingService.Hash(updateUser.PasswordHash!);
+        return UserMapper.ToResponse(_repo.Update(updateUser));
     }
 
     public void Delete(int id)
